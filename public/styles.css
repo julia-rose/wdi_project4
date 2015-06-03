@@ -1,0 +1,26 @@
+.flag {
+	width: 15px;
+	height: 15px;
+	background-color: #f00;
+	margin: 5px;
+	display: inline-block;
+}
+
+.chatbox {
+	height: 150px;
+	width: 500px;
+}
+
+.poll {
+	display: block;
+}
+
+.responses {
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	background-color: blue;
+	color: white;
+	text-align: center;
+	margin: 5px;
+}

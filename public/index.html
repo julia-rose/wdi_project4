@@ -1,0 +1,77 @@
+<html>
+<head>
+    <title>PulsePoint</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>
+        var socket = io.connect();
+
+        socket.on('chat', function (data) {
+            var msg = data.nick+': '+data.message;
+            $('textarea').val($('textarea').val()+msg+'\n');
+            $('chatText').val();
+        });
+
+        socket.on('flagged', function () {
+            $('.flags').append('<div class="flag"></div>');
+        });
+
+        socket.on('poll', function() {
+            $('.polls').append('<div class="poll"><div class="responses" id="zeros">0</div><div class="responses" id="ones">1</div><div class="responses" id="twos">2</div><div class="responses" id="threes">3</div><div class="responses" id="fours">4</div><div class="responses" id="fives">5</div></div>');
+        });
+
+        // Handle UI
+        $(function() {
+            // Set nickname
+            $('#nick').on('click', function() {
+                socket.emit('nick', $('#nickText').val());
+            });
+
+            // Send question message
+            $('#chat').on('click', function() {
+                socket.emit('chat', {
+                    message: $('#chatText').val()
+                });
+            });
+
+            // Raise a red flag
+            $('#raiseflag').on('click', function() {
+                socket.emit('flagged');
+            });
+
+            // Start a poll
+            $('#startpoll').on('click', function() {
+                socket.emit('poll');
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>PulsePoint</h1>
+
+    <p>
+        <button id="raiseflag">Raise a Flag</button>
+        <div class="flags">
+        </div>
+    </p>
+
+    <p>
+        <input id="nickText" type="text" placeholder="e.g. SpongeBob"/>
+        <button id="nick">Set Nickname</button>
+    </p>
+
+    <textarea class="chatbox"></textarea>
+
+    <p>
+        <input id="chatText" type="text"/>
+        <button id="chat">Submit Question</button>
+    </p>
+
+    <p>
+        <button id="startpoll">Start a Poll</button>
+        <div class="polls">
+        </div>
+    </p>
+</body>
+</html>
