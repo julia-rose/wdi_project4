@@ -1,0 +1,140 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>LectureSpecter</title>
+    <link rel="stylesheet" type="text/css" href="./stylesheets/styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>
+    var socket = io.connect();
+
+    function Student(room, sid) {
+        this.room = room;
+        this.sid = sid;
+    }
+
+    var room = $('input').data('room');
+    var student = new Student(room, '', '');
+
+        socket.on('connect', function() {
+            socket.emit('join', {room: room});
+        });
+
+        socket.on('chat', function (data) {
+            var msg = data.nick+': '+data.message;
+            $('textarea').val($('textarea').val()+msg+'\n');
+            $('chatText').val();
+        });
+
+        socket.on('flagged', function () {
+            $('.flags').append('<div class="flag"></div>');
+        });
+
+        socket.on('poll', function() {
+            $('.polls').append('<div class="poll"><div class="responses" id="zeros">0</div><div class="responses" id="ones">1</div><div class="responses" id="twos">2</div><div class="responses" id="threes">3</div><div class="responses" id="fours">4</div><div class="responses" id="fives">5</div></div>');
+        });
+
+        socket.on('votezero', function() {
+            var zeroheight = $('#zeros').height();
+            zeroheight = zeroheight + 15;
+            $('#zeros').height(zeroheight);
+        });
+
+        socket.on('voteone', function() {
+            var oneheight = $('#ones').height();
+            oneheight = oneheight + 15;
+            $('#ones').height(oneheight);
+        });
+
+        socket.on('votetwo', function() {
+            var twoheight = $('#twos').height();
+            twoheight = twoheight + 15;
+            $('#twos').height(twoheight);
+        });
+
+        socket.on('votethree', function() {
+            var threeheight = $('#threes').height();
+            threeheight = threeheight + 15;
+            $('#threes').height(threeheight);
+        });
+
+        socket.on('votefour', function() {
+            var fourheight = $('#fours').height();
+            fourheight = fourheight + 15;
+            $('#fours').height(fourheight);
+        });
+
+        socket.on('votefive', function() {
+            var fiveheight = $('#fives').height();
+            fiveheight = fiveheight + 15;
+            $('#fives').height(fiveheight);
+        });
+
+        // Handle UI
+        $(function() {
+            // Start a lesson
+            $('#startlesson').on('click', function(){
+                socket.emit('join');
+            });
+
+            // Set nickname
+            $('#nick').on('click', function() {
+                socket.emit('nick', $('#nickText').val());
+            });
+
+            // Send question message
+            $('#chat').on('click', function() {
+                socket.emit('chat', {
+                    message: $('#chatText').val()
+                });
+            });
+
+            // Raise a red flag
+            $('#raiseflag').on('click', function() {
+                socket.emit('flagged');
+            });
+
+            // Start a poll
+            $('#startpoll').on('click', function() {
+                socket.emit('poll');
+            });
+
+            // Vote 'zero' on a poll
+            $('.polls').on('click', "#zeros", function() {
+                socket.emit('votezero');
+            });
+
+            // Vote 'one' on a poll
+            $('.polls').on('click', "#ones", function() {
+                socket.emit('voteone');
+            });
+
+            // Vote 'two' on a poll
+            $('.polls').on('click', "#twos", function() {
+                socket.emit('votetwo');
+            });
+
+            // Vote 'three' on a poll
+            $('.polls').on('click', "#threes", function() {
+                socket.emit('votethree');
+            });
+
+            // Vote 'four' on a poll
+            $('.polls').on('click', "#fours", function() {
+                socket.emit('votefour');
+            });
+
+            // Vote 'five' on a poll
+            $('.polls').on('click', "#fives", function() {
+                socket.emit('votefive');
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome to LectureSpecter</h1>
+
+    {{{body}}}
+
+</body>
+</html>
