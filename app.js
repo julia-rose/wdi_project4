@@ -69,7 +69,7 @@ io.on('connection', function (socket) {
 
         // Relay chat data to all clients
         socket.on('chat', function(data) {
-            socket.get('nickname', function(err, nick) {
+            socket.get('nickname', function(nick) {
 
                 var payload = {
                     message: data.message,
