@@ -1,3 +1,62 @@
+body {
+	font-family: 'Yantramanav', sans-serif;
+}
+
+h1 {
+	font-size: 45px;
+	font-family: 'Special Elite', cursive;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+h2 {
+	font-size: 20px;	
+	margin-bottom: 20px;
+}
+
+h3 {
+	font-family: 'Special Elite', cursive;
+	font-size: 18px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+li {
+	list-style-type: circle;
+	margin-left: 30px;
+	line-height: 1.5;
+}
+
+button {
+	font-family: 'Yantramanav', sans-serif;
+	font-size: 16px;
+	margin: 5px;
+}
+
+a {
+	color: black;
+	text-decoration: none;
+	font-family: 'Special Elite', cursive;
+	font-size: 25px;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.start {
+	width: 200px;
+	margin: 0 auto;
+	padding: 30px;
+}
+
+#content {
+	max-width: 500px;
+	margin: 0 auto;
+	padding: 20px;
+
+}
+
 .flag {
 	width: 15px;
 	height: 15px;
@@ -17,10 +76,11 @@
 
 .responses {
 	display: inline-block;
-	width: 15px;
-	height: 15px;
+	width: 20px;
+	height: 20px;
 	background-color: blue;
 	color: white;
 	text-align: center;
+	line-height: 1.5;
 	margin: 5px;
 }

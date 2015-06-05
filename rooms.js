@@ -1,3 +1,5 @@
+// This function lovingly stolen from a tutorial: http://code.tutsplus.com/tutorials/connect-4-with-socketio--cms-19869
+
 exports.generateRoom = function(length) {
 	var haystack = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 	var room = '';

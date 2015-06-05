@@ -11,13 +11,16 @@ app.engine('html', hbs.__express);
 
 app.use(express.static('public'));
 
+// Define a variable that will become the "room name"
 var share = '';
 
+// Generate a string of letters and numbers and set it as the new room name
 app.get('/', function(req, res) {
     share = rooms.generateRoom(6);
-    res.render('index');
+    res.render('index', {lesson: share});
 });
 
+// If the user clicked "start lesson," they'll reach a new URL with the room name as the path
 app.get('/:lesson([A-Za-z0-9]{6})', function(req, res) {
     share = req.params.lesson;
     res.render('lesson', {shareURL: req.protocol + '://' + req.get('host') + '/' + share, share: share});
@@ -25,94 +28,89 @@ app.get('/:lesson([A-Za-z0-9]{6})', function(req, res) {
 
 server.listen(3000);
 
-// Object to hold all lessons; key is the room id
-var lessons = {};
+// Get rid of the verbose socket.io logging
+io.set("log level", 1);
+
+// Keep a running list of all connected clients
+var allClients = [];
+
+// Define a variable for the teacher
+var teacher = '';
 
 // Handle socket traffic
 io.on('connection', function (socket) {
-    // Log a client connection
-    socket.on('join', function (data) {
-        if (data.room in lessons) {
-            if(typeof lessons[data.room].person2 != "undefined") {
-                socket.emit('leave');
-                return
-            }
-            socket.join(data.room);
-            socket.set('room', data.room);
-            socket.set('sid', -1);
-        } else {
-            socket.join(data.room);
-            socket.set('room', data.room);
-            socket.set('sid', 1);
-            lessons[data.room] = {
-                person1: socket
-            };
-            socket.emit('assign', {pid: 1});
-        }
 
-    });
+    // Log a client connection
     console.log("A client has connected");
 
+    // Add new connected client to the array of all currently connected clients
+    allClients.push(socket.id);
+
+    // If the new client is the first to connect, set them as the teacher
+    teacher = allClients[0];
+
+    // If someone leaves, remove them from the array of clients
+    socket.on('disconnect', function() {
+      console.log('A client has disconnected');
+
+      var i = allClients.indexOf(socket.id);
+      allClients.splice(i, 1);
+      console.log(allClients);
+    });
+
+    console.log(allClients);
+
     // Set the nickname property for a given client
-    socket.on('nick', function(nick) {
-        socket.set('nickname', nick);
-    });
-
-    // Relay chat data to all clients
-    socket.on('chat', function(data) {
-        socket.get('nickname', function(err, nick) {
-            var nickname = err ? 'Anonymous' : nick;
-
-            var payload = {
-                message: data.message,
-                nick: nickname
-            };
-
-            socket.emit('chat', payload);
-            socket.broadcast.emit('chat', payload);
+        socket.on('nick', function(nick) {
+            socket.set('nickname', nick);
         });
-    });
 
-    // Display red flags to all clients
-    socket.on('flagged', function(){
-        socket.emit('flagged');
-        socket.broadcast.emit('flagged');
-    });
+        // Relay chat data to all clients
+        socket.on('chat', function(data) {
+            socket.get('nickname', function(err, nick) {
 
-    // Display the poll to all clients
-    socket.on('poll', function(){
-        socket.emit('poll');
-        socket.broadcast.emit('poll');
-    });
+                var payload = {
+                    message: data.message,
+                    nick: nick || 'Anonymous'
+                };
 
-    // Display votes
-    socket.on('votezero', function(){
-        socket.emit('votezero');
-        socket.broadcast.emit('votezero');
-    });
+                io.sockets.emit('chat', payload);
+            });
+        });
 
-    socket.on('voteone', function(){
-        socket.emit('voteone');
-        socket.broadcast.emit('voteone');
-    });
+        // Display red flags to all clients
+        socket.on('flagged', function(){
+            io.sockets.emit('flagged');
+        });
 
-    socket.on('votetwo', function(){
-        socket.emit('votetwo');
-        socket.broadcast.emit('votetwo');
-    });
+        // Display the poll to all clients
+        socket.on('poll', function(){
+            io.sockets.emit('poll');
+        });
 
-    socket.on('votethree', function(){
-        socket.emit('votethree');
-        socket.broadcast.emit('votethree');
-    });
+        // Display votes
+        socket.on('votezero', function(){
+            io.sockets.emit('votezero');
+        });
 
-    socket.on('votefour', function(){
-        socket.emit('votefour');
-        socket.broadcast.emit('votefour');
-    });
+        socket.on('voteone', function(){
+            io.sockets.emit('voteone');
+        });
 
-    socket.on('votefive', function(){
-        socket.emit('votefive');
-        socket.broadcast.emit('votefive');
-    });
+        socket.on('votetwo', function(){
+            io.sockets.emit('votetwo');
+        });
+
+        socket.on('votethree', function(){
+            io.sockets.emit('votethree');
+        });
+
+        socket.on('votefour', function(){
+            io.sockets.emit('votefour');
+        });
+
+        socket.on('votefive', function(){
+            io.sockets.emit('votefive');
+        });
+
 });
