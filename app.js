@@ -64,20 +64,17 @@ io.on('connection', function (socket) {
 
     // Set the nickname property for a given client
         socket.on('nick', function(nick) {
-            socket.set('nickname', nick);
+            socket.nickname = nick;
         });
 
         // Relay chat data to all clients
         socket.on('chat', function(data) {
-            socket.get('nickname', function(nick) {
+             var payload = {
+                message: data.message,
+                nick: socket.nickname || 'Anonymous'
+            };
 
-                var payload = {
-                    message: data.message,
-                    nick: nick || 'Anonymous'
-                };
-
-                io.sockets.emit('chat', payload);
-            });
+            io.sockets.emit('chat', payload);
         });
 
         // Display red flags to all clients
