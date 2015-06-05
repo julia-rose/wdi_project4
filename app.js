@@ -26,7 +26,9 @@ app.get('/:lesson([A-Za-z0-9]{6})', function(req, res) {
     res.render('lesson', {shareURL: req.protocol + '://' + req.get('host') + '/' + share, share: share});
 });
 
-server.listen(5000);
+server.listen(process.env.PORT || 3000, function(){
+  console.log('listening on', server.address().port);
+});
 
 // Get rid of the verbose socket.io logging
 io.set("log level", 1);
